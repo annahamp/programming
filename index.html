@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz</title>
+    <style>
+        body { 
+            background-color: #1f1d30;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            color: #ffffff;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+        }
+    
+        h1, h2 {
+            text-align: center;
+        }
+    
+        input, button {
+            font-size: 1rem;
+            padding: 0.7rem 1.5rem;
+            margin: 0.5rem;
+            border: none;
+            border-radius: 5px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+    
+        label {
+            font-size: 1rem;
+            display: inline-block;
+            vertical-align: middle;
+            margin-bottom: 0.3rem; 
+        }
+    
+        form {
+            margin: 1rem 0;
+            text-align: center;
+        }
+    
+        #questionSpace {
+            text-align: left; 
+        }
+    
+        img {
+            max-width: 100%; 
+        }
+    
+        #questionSpace p {
+            font-size: 1.6em;
+        }
+    
+        #questionSpace label {
+            font-size: 1.1em;
+        }
+            #result h2 {
+            font-size: 2em;
+        }
+    </style>
+    
+</head>
+<body>
+    <h1>Plan your dream holiday destination and I’ll tell you which teacher is your spirit animal 97% Acuracy</h1>
+    <div id="userStart">
+        <h2> Please enter your name to start the quiz.</h2>
+        <input id="userName"> 
+        <button onclick="startQuiz()">Enter</button>
+    </div>
+    <form id="formQuiz">
+        <div id="questionNumber"></div>
+        <div id="questionSpace"></div>
+        <input id="submit" type="submit" value="Submit" onclick="check()">
+
+    </form>
+    <div id="result">
+        <h2></h2>
+    </div>
+    <br>
+    
+    <button onclick="restartQuiz()">Restart Quiz</button>
+
+    <script>
+        // defining variables to interact with elements in the HTML
+        var userName = document.getElementById("userName");
+        var userStart = document.getElementById("userStart");
+        var formQuiz = document.getElementById("formQuiz");
+        var result = document.getElementById("result");
+        var questionSpace = document.getElementById("questionSpace");
+        var questionNumber = document.getElementById("questionNumber");
+
+        // Setting quiz variables to zero
+        var score = 0; //score starts at 0
+        var currentQuestion = 0; //starts at first question
+
+        // Hiding form when page is forst loaded
+        formQuiz.style.display = "none";
+
+        //variable that holds the result message is empty when first loaded
+        var resultText = "";
+
+
+        // data for the quiz questions and choices
+        var quizData = [
+            {
+                question: "Where are you going?",
+                choices: ["Ireland", "Rome", "Dunedin", "Maldives "]
+            },
+            {
+                question: "what are you bringing?",
+                choices: ["Sunhat", "Reading glasses", "Jandles", "Your chicken"]
+            },
+            {
+                question: "Who are you going with?",
+                choices: ["your best frieind", "Your travel-sized dog", "family", "Your chicken"]
+            },
+            {
+                question: "How long are you going for?",
+                choices: ["2 months", "2 weeks", "1 day", "Never coming back"]
+            },
+            {
+                question: "What is the first thing you do?",
+                choices: ["Text your family", "Get airport food", "Lose your passport", "Feed your chicken"]
+            },
+            {
+                question: "Where are you staying?",
+                choices: ["Hostel", "5-star hotel", "Family house", "In a bungalow"]
+            },
+            {
+                question: "How are you getting around?",
+                choices: ["Bike", "Taxi", "Public transport", "On your chicken"]
+            },
+            {
+                question: "What activities are you doing first?",
+                choices: ["Backpacking", "Reading a book on the balcony", "Terrorize local youth", "Going to the big ben (sightseeing)"]
+            },
+            {
+                question: "What food are you eating?",
+                choices: ["Street food", "5-star restaurant", "Sandwich", "Chicken"]
+            },
+            {
+                question: "What songs are you listening to?",
+                choices: ["Shape of you", "Top 100 hits", "The sounds of Nature", "The duck song"]
+            },
+            {
+                question: " What goes wrong?",
+                choices: ["Aliens", "The wifi goes out", "Your hat flies off", "You lose your chicken"]
+            },
+        ]
+
+        // function which gets input from user than displays the first question
+        function startQuiz(){
+            //if the user does not enter anything, it will stop the user from continuing
+            if(userName.value == "") {
+                alert("Please type your name");
+            } else {
+                // Hide the start section, show the quiz form, and calls load question function
+                userStart.style.display = "none"; //hiding the user start div
+                formQuiz.style.display = "block"; //displaying the quiz form
+                loadQuestion(); //calling on the loadQuestion function 
+            }
+        }
+        
+        //function to load a question
+        function loadQuestion() {
+            // Get the data for the current question
+            var questionData = quizData[currentQuestion];  
+            //clears the options
+            var optionsHTML = "";
+            
+            // loop through choices for current question to create a radio button for each option 
+            for (var i = 0; i < questionData.choices.length; i++) {  
+                // Construct HTML code for radio button and label. using the current question to get unique ids for the choices
+                optionsHTML += `
+                <input type="radio" name="quizOption${currentQuestion + 1}" value="${i + 1}" id="quizOption${currentQuestion + 1}option${i + 1}"> 
+                <label for="quizOption${currentQuestion + 1}option${i +1 }">${questionData.choices[i]}</label><br>
+                `;
+            }
+            // dsplaying the question and options in the questionSpace
+            // in the questionData array, it finds the question and dispalays the current questions text
+            //
+            questionSpace.innerHTML = `
+           <p>${questionData.question}</p>
+            ${optionsHTML} 
+          `;
+
+          //putting the current question number (plus one so it starts at 1) on the page
+            questionNumber.innerHTML = `Question ${currentQuestion + 1} of ${quizData.length}`;
+        }
+
+        // Function to check the selected answer
+        function check(){
+            //stops page from immediantly refreashing
+            event.preventDefault();
+            //getting the selected option (the button that is checked)
+            var selectedOption = document.querySelector('input[name="quizOption'+(currentQuestion + 1) +'"]:checked');
+            if (selectedOption) {
+                // Get the value of the selected option
+                var selectedValue = selectedOption.value;
+
+                // add points based on selected option
+                if (selectedValue == "1") {
+                    score += 1;
+                } else if (selectedValue == "2") {
+                    score += 2;
+                } else if (selectedValue == "3") {
+                    score += 3;
+                } else if (selectedValue == "4") {
+                    score += 4;
+                }
+                //goes to next question
+                currentQuestion++;
+                //if there are more questions, it loads the next one else it hides the form and displays the result
+                if (currentQuestion < quizData.length) {
+                    //calling on loadQuestion function (getting the next question)
+                    loadQuestion();
+                } else {
+                    //hiding the form and running function displayResult
+                    formQuiz.style.display = "none";
+                    displayResult();
+                }
+            } else {
+                //if no option is selected, alert pops up telling user to select a option. They cannot move on untill they select a option
+                alert("Please select an option.");
+            }
+        }
+        //function to display result. 
+        function displayResult(){
+        //showsa different result depending on the score you get
+        //when the score is greater than or = to 11 and less 20, it will run this code
+            if(score >= 11 && score < 20) {
+                //the result text will be the users name they entered and a comment. 
+                resultText = userName.value + " you're grand. your spirit animal is miss edwards" ; 
+                //the result on the html will show the result text above aswell as a picture
+                result.innerHTML = resultText + "<br><img src='alan.jpg' style='width: 400px;'>";   
+                //when the score is greater than or = to 20 and less 29, it will run this code         
+            } else if(score >= 20 && score < 29){
+                //the result text will be the users name they entered and a comment.                 
+                resultText = userName.value + " your spirit animal is miss leman";
+                //the result on the html will show the result text above aswell as a picture
+                result.innerHTML = resultText + "<br><img src='judi.jpg' style='width: 400px;'>"; 
+                //when the score is greater than or = to 29 and less 38, it will run this code           
+            } else if(score >= 29 && score < 38){
+                //the result text will be the users name they entered and a comment. 
+                resultText = userName.value + "  your spirit animal is miss papa";
+                //the result on the html will show the result text above aswell as a picture
+                result.innerHTML = resultText + "<br><img src='misspapa.png' style='width: 400px;'>" ;
+                //when the score is greater than or = to 38 and less or equal to 44, it will run this code
+            } else if(score >= 38 && score <= 44){
+                //the result text will be the users name they entered and a comment. 
+                resultText = userName.value + " your spirit animal is mr patterson" ;
+                //the result on the html will show the result text above aswell as a picture
+                result.innerHTML = resultText + "<br><img src='pearl.jpg' style='width: 400px; height: 350px;'>" ;
+            }
+        }
+
+        //function the restarts quiz
+        function restartQuiz() {
+            // Reset variables
+            score = 0;
+            currentQuestion = 0;
+
+            // Show the start section and hide the form
+            userStart.style.display = "block";
+            formQuiz.style.display = "none";
+
+            // Clear any existing result & username input
+            result.innerHTML = "";
+            userName.value = ""
+
+        }
+    </script>
+</body>
+</html>
